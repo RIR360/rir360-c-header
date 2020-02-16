@@ -12,6 +12,12 @@
 #define SQUARE(x) (x*x)
 #define CUBE(x) (x*x*x)
 
+// *** custom types ***
+typedef char sstr[50]; // short string holds 50 characters
+typedef char str[100]; // string holds 100 characters
+typedef char lstr[500]; // long string holds 500 characters
+typedef char llstr[1000]; // long long string holds 1000 characters
+
 // *** library functions ***
 // exponent: base to the power of n
 float expo(float base, float power)
