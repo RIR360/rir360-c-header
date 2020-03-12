@@ -11,19 +11,19 @@
 #define PI 3.1415926536
 #define SQUARE(x) (x*x)
 #define CUBE(x) (x*x*x)
+// maximum characters fit in a line (by default)
+#define LINE_MAX_C 80
 
 // *** custom types ***
-typedef char sstr[50]; // short string holds 50 characters
-typedef char str[100]; // string holds unknown characters
-typedef char lstr[500]; // long string holds 500 characters
-typedef char llstr[1000]; // long long string holds 1000 characters
+typedef char* string;
 
 // *** library functions ***
 // exponent: base to the power of n
 float expo(float base, float power)
 {
+    int i;
     float expon = 1;
-    for (int i = 0; i < power; i++) {
+    for (i = 0; i < power; i++) {
         expon *= base;
     }
     return expon;
@@ -41,11 +41,8 @@ float radToDeg(float rad)
 // returns factorial of an integer
 int fact(int num)
 {
-    int factorial = 1;
-    for (int i = 0; i < num; i++) {
-        factorial *= num - i;
-    }
-    return factorial;
+    if (num <= 1) return 1;
+    else return num * fact(num - 1);
 }
 // nCr combination
 int nCr(int n, int r)
@@ -70,7 +67,8 @@ float areaOfCir(float r)
 // repeats a function for n times
 void repeat(void (*f)(), int n)
 {
-    for(int i = 0; i < n; i++) {
+    int i;
+    for(i = 0; i < n; i++) {
         f();
     }
 }
@@ -81,9 +79,11 @@ int getInt(char prompt[])
     int out;
     printf("%s", prompt);
 
-    if(!scanf("%d", &out))
+    if(!scanf(" %d", &out))
+    {
         printf("Error: You were supposed put an integer.\n\a");
         out = 0;
+    }
 
     return out;
 }
@@ -94,31 +94,37 @@ float getFloat(char prompt[])
     float out;
     printf("%s", prompt);
 
-    if(!scanf("%f", &out))
+    if(!scanf(" %f", &out)) {
         printf("Error: You were supposed put a float.\n\a");
         out = 0.0;
+    }
 
     return out;
 }
-// takes string input from user and returns it
-/*
-char* getString(char prompt[])
+// takes single character and returns it
+char getChar(char prompt[])
 {
-    char* out[500];
+    char out;
     printf("%s", prompt);
-    //scanf("%s", &out);
-
-    out[500] = "rizvy";
+    scanf(" %c", &out);
 
     return out;
 }
-*/
+// takes string input from user and returns it as string
+char *getString(char prompt[])
+{
+    char *out;
+    printf("%s", prompt);
+    scanf("%[^\n]%*c", out);
+
+    return out;
+}
 // transform string case to lower case
 void toLower(char text[])
 {
-    int count = strlen(text);
-
-    for(int i = 0; i < count; i++) {
+    int count = strlen(text), i;
+    
+    for(i = 0; i < count; i++) {
         if(text[i] > 64 && text[i] < 97) {
             text[i] += 32;
         } else text[i];
@@ -127,9 +133,9 @@ void toLower(char text[])
 // transform string case to upper case
 void toUpper(char text[])
 {
-    int count = strlen(text);
+    int count = strlen(text), i;
 
-    for(int i = 0; i < count; i++) {
+    for(i = 0; i < count; i++) {
         if(text[i] > 96) {
             text[i] -= 32;
         } else text[i];
@@ -141,8 +147,9 @@ int lSearch(int target, int matchNo, int array[], int arrayLength)
 {
     int match = 0;
     int matches = 0;
+    int i;
 
-    for(int i = 0; i < arrayLength; i++) {
+    for(i = 0; i < arrayLength; i++) {
         if(array[i] == target) {
             matches++;
             if(matches == matchNo) {
@@ -157,19 +164,19 @@ int lSearch(int target, int matchNo, int array[], int arrayLength)
 // returns the available matches for specific integer target in an array
 int lMatches(int target, int array[], int arrayLength)
 {
-    int matches = 0;
-    for(int i = 0; i < arrayLength; i++) {
+    int matches = 0, i;
+    for(i = 0; i < arrayLength; i++) {
         if(array[i] == target) {
             matches++;
         }
     }
     return matches;
 }
-// ask box
+// ask dialogue box
 // prompts a question on stdout in a box scans for input and sends 1(if input was y) if or 0(if input was n) to the check variable.
 void askBox(char text[],int* check)
 {
-    int textLength = strlen(text), length = 9;
+    int textLength = strlen(text), length = 9, i;
     char out[50];
 
     if(textLength > length) {
@@ -177,12 +184,12 @@ void askBox(char text[],int* check)
     }
 
     printf("\n");
-    for (int i = 0; i < length + 3; i++) {
+    for (i = 0; i < length + 3; i++) {
         printf("=");
     }
     printf("\n\n %s\n", text);
     printf("\n [y]yes   [n]no\n\n");
-    for (int i = 0; i < length + 3; i++) {
+    for (i = 0; i < length + 3; i++) {
         printf("=");
     }
     printf("::==> ");
@@ -198,4 +205,18 @@ void askBox(char text[],int* check)
         printf("You're supposed put yes or no.\a");
         check = 2;
     }
+}
+// Center any length of text in the terminal
+// It works only when terminal line width is 80(default)
+void centerT(char text[])
+{
+//    #include<string.h>
+//    int LINE_MAX_C = 80;
+    int textLength = strlen(text), i;
+    int spaceAmount = (LINE_MAX_C - textLength) / 2;
+
+    for (i = 0; i < spaceAmount; i++)
+        printf(" ");
+
+    printf("%s", text);
 }
